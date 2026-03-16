@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #46178f;
+  --secondary: #eb1041;
+  --accent: #1368ce;
+  --success: #26890c;
+  --warning: #ffa602;
+  --background: #f2f2f2;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-purple-theme: var(--primary);
+  --color-red-theme: var(--secondary);
+  --color-blue-theme: var(--accent);
+  --color-green-theme: var(--success);
+  --color-yellow-theme: var(--warning);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  font-family: 'Inter', sans-serif;
 }
+
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@utility btn-kahoot {
+  @apply px-6 py-3 rounded-lg font-bold text-white transition-all transform hover:scale-105 active:scale-95 shadow-lg;
+}
+
+@utility btn-purple { @apply btn-kahoot bg-purple-theme; }
+@utility btn-red { @apply btn-kahoot bg-red-theme; }
+@utility btn-blue { @apply btn-kahoot bg-blue-theme; }
+@utility btn-green { @apply btn-kahoot bg-green-theme; }
+@utility btn-yellow { @apply btn-kahoot bg-yellow-theme; }
