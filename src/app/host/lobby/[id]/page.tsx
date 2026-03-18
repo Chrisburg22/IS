@@ -11,6 +11,8 @@ const QUIZ_TITLES: Record<string, string> = {
   basico: "Nivel Básico: Fundamentos",
   intermedio: "Nivel Intermedio: Despliegue",
   avanzado: "Nivel Avanzado: Excelencia",
+  "3.4": "3.4 Registro del estado de la configuración del software",
+  "3.3": "3.3 Control de la configuración del software",
 };
 
 function HostLobbyContent() {

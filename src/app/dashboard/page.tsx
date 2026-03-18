@@ -30,6 +30,22 @@ const PREDEFINED_QUIZZES = [
     level: "Hard",
     color: "bg-red-500"
   },
+  { 
+    id: "3.4", 
+    title: "3.4 Registro del estado de la configuración del software", 
+    description: "Gestión de estado, líneas base y reportes de auditoría.",
+    questions: 10, 
+    level: "Medium",
+    color: "bg-orange-500"
+  },
+  { 
+    id: "3.3", 
+    title: "3.3 Control de la configuración del software", 
+    description: "Gestión de cambios, evaluación, CCB y líneas base.",
+    questions: 10, 
+    level: "Medium",
+    color: "bg-teal-500"
+  },
 ];
 
 export default function Dashboard() {
