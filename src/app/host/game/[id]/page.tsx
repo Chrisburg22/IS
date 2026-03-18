@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Timer, ArrowRight, Trophy } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { pusherClient } from "@/lib/pusher-client";
 
 interface QuizQuestion {
   text: string;
@@ -63,16 +64,24 @@ const QUIZ_TITLES: Record<string, string> = {
   avanzado: "Nivel Avanzado: Excelencia",
 };
 
-export default function HostGame() {
+function HostGameContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const quizId = params?.id as string;
+  const pin = searchParams.get("pin");
   const questions = QUIZZES_CONTENT[quizId] || QUIZZES_CONTENT.basico;
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(questions[0].timeLimit);
   const [gameState, setGameState] = useState<"QUESTION" | "RESULTS" | "FINAL_RESULTS">("QUESTION");
   const [answersCount, setAnswersCount] = useState(0);
+
+  interface PlayerScore {
+     score: number;
+     lastAnswerCorrect: boolean;
+  }
+  const [playerScores, setPlayerScores] = useState<Record<string, PlayerScore>>({});
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -84,6 +93,51 @@ export default function HostGame() {
       setGameState("RESULTS");
     }
   }, [timeLeft, gameState]);
+
+  useEffect(() => {
+    if (!pin) return;
+    const stateStr = gameState === 'QUESTION' ? 'question-changed' : gameState === 'RESULTS' ? 'show-results' : 'final-results';
+    
+    fetch('/api/game/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+         pin, 
+         state: stateStr,
+         questionIndex: currentQuestionIndex
+      })
+    }).catch(console.error);
+  }, [pin, gameState, currentQuestionIndex]);
+
+  useEffect(() => {
+    if (!pin) return;
+    const channel = pusherClient.subscribe(`game-${pin}`);
+    
+    channel.bind("player-answered", (data: { nickname: string, answerIndex: number, questionIndex: number }) => {
+       if (data.questionIndex === currentQuestionIndex && gameState === "QUESTION") {
+          const isCorrect = currentQuestion.options[data.answerIndex]?.isCorrect;
+          setAnswersCount(prev => prev + 1);
+          setPlayerScores(prev => {
+             const currentScore = prev[data.nickname]?.score || 0;
+             const speedBonus = isCorrect && currentQuestion.timeLimit > 0 ? Math.round((timeLeft / currentQuestion.timeLimit) * 500) : 0;
+             const pointsEarned = isCorrect ? 500 + speedBonus : 0;
+             
+             return {
+                ...prev,
+                [data.nickname]: {
+                   score: currentScore + pointsEarned,
+                   lastAnswerCorrect: !!isCorrect
+                }
+             };
+          });
+       }
+    });
+
+    return () => {
+      channel.unbind_all();
+      pusherClient.unsubscribe(`game-${pin}`);
+    };
+  }, [pin, currentQuestionIndex, gameState, currentQuestion, timeLeft]);
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -198,20 +252,23 @@ export default function HostGame() {
                  </p>
 
                  <div className="space-y-3 md:space-y-4 text-left">
-                    <div className="flex justify-between items-center p-4 md:p-5 bg-purple-theme/5 rounded-xl md:rounded-2xl border-l-[8px] md:border-l-[12px] border-yellow-theme shadow-sm">
-                       <div className="flex items-center gap-3 md:gap-5">
-                          <span className="font-black text-xl md:text-3xl text-neutral-300 italic">#1</span>
-                          <span className="font-black text-xl md:text-3xl text-neutral-800">Miguel</span>
+                    {Object.entries(playerScores)
+                      .sort((a, b) => b[1].score - a[1].score)
+                      .slice(0, 5)
+                      .map(([nickname, data], idx) => (
+                       <div key={nickname} className={`flex justify-between items-center p-4 md:p-5 bg-purple-theme/5 rounded-xl md:rounded-2xl border-l-[8px] md:border-l-[12px] shadow-sm ${
+                         idx === 0 ? 'border-yellow-theme' : idx === 1 ? 'border-neutral-300' : idx === 2 ? 'border-amber-600' : 'border-purple-theme'
+                       }`}>
+                          <div className="flex items-center gap-3 md:gap-5">
+                             <span className="font-black text-xl md:text-3xl text-neutral-300 italic">#{idx + 1}</span>
+                             <span className="font-black text-xl md:text-3xl text-neutral-800">{nickname}</span>
+                          </div>
+                          <span className="font-black text-xl md:text-3xl text-purple-theme">{data.score} pts</span>
                        </div>
-                       <span className="font-black text-xl md:text-3xl text-purple-theme">1,942 pts</span>
-                    </div>
-                    <div className="flex justify-between items-center p-4 md:p-5 bg-purple-theme/5 rounded-xl md:rounded-2xl border-l-[8px] md:border-l-[12px] border-neutral-300 shadow-sm">
-                       <div className="flex items-center gap-3 md:gap-5">
-                          <span className="font-black text-xl md:text-3xl text-neutral-300 italic">#2</span>
-                          <span className="font-black text-xl md:text-3xl text-neutral-800">Sofía</span>
-                       </div>
-                       <span className="font-black text-xl md:text-3xl text-purple-theme">1,881 pts</span>
-                    </div>
+                    ))}
+                    {Object.keys(playerScores).length === 0 && (
+                       <div className="text-center text-neutral-500 font-bold p-8">Nadie respondió aún...</div>
+                    )}
                  </div>
 
                  <button 
@@ -231,5 +288,13 @@ export default function HostGame() {
          </div>
       </footer>
     </main>
+  );
+}
+
+export default function HostGame() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-purple-theme flex items-center justify-center text-white font-bold">Cargando...</div>}>
+      <HostGameContent />
+    </Suspense>
   );
 }

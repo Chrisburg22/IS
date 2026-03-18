@@ -14,9 +14,18 @@ function PlayContent() {
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (nickname.trim()) {
-      // In a real app, we would call an API to join the session
-      // For now, we simulate success and redirect to lobby
-      router.push(`/lobby?pin=${pin}&nickname=${nickname}`);
+      try {
+        const res = await fetch('/api/game/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin, nickname })
+        });
+        if (res.ok) {
+          router.push(`/lobby?pin=${pin}&nickname=${nickname}`);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

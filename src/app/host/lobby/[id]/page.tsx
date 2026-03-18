@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Loader2, Play, QrCode } from "lucide-react";
+import { pusherClient } from "@/lib/pusher-client";
 import { QRCodeSVG } from "qrcode.react";
 
 const QUIZ_TITLES: Record<string, string> = {
@@ -18,18 +19,31 @@ function HostLobbyContent() {
   const quizId = params?.id as string;
   const [pin] = useState(Math.floor(100000 + Math.random() * 900000).toString());
   const [players, setPlayers] = useState<string[]>([]);
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Simular jugadores uniéndose
-    const timer = setTimeout(() => {
-      setPlayers(["Carlos", "Sofía", "Miguel", "Andrea"]);
-      setIsReady(true);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    const channel = pusherClient.subscribe(`game-${pin}`);
+    
+    channel.bind("player-joined", (data: { nickname: string }) => {
+       setPlayers(prev => {
+          if (!prev.includes(data.nickname)) {
+             return [...prev, data.nickname];
+          }
+          return prev;
+       });
+    });
 
-  const handleStartGame = () => {
+    return () => {
+      channel.unbind_all();
+      pusherClient.unsubscribe(`game-${pin}`);
+    };
+  }, [pin]);
+
+  const handleStartGame = async () => {
+    await fetch('/api/game/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin, state: 'game-started' })
+    });
     router.push(`/host/game/${quizId}?pin=${pin}`);
   };
 

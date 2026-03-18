@@ -1,28 +1,45 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Loader2, QrCode } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { pusherClient } from "@/lib/pusher-client";
 
 function LobbyContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const pin = searchParams.get("pin");
   const nickname = searchParams.get("nickname");
   const [players, setPlayers] = useState<string[]>([]);
 
   useEffect(() => {
-    // In a real app, Pusher would handle this. 
-    // For now, we simulate some players joining.
+    if (!pin) return;
     if (nickname) setPlayers([nickname]);
-    
-    const timer = setTimeout(() => {
-      setPlayers(prev => [...prev, "Amigo1", "ProGamer", "NextJS_Fan"]);
-    }, 2000);
 
-    return () => clearTimeout(timer);
-  }, [nickname]);
+    const channel = pusherClient.subscribe(`game-${pin}`);
+    
+    channel.bind("player-joined", (data: { nickname: string }) => {
+       setPlayers(prev => {
+          if (!prev.includes(data.nickname)) {
+             return [...prev, data.nickname];
+          }
+          return prev;
+       });
+    });
+
+    channel.bind("game-state-changed", (data: { state: string }) => {
+      if (data.state === "game-started") {
+        router.push(`/play/game?pin=${pin}&nickname=${nickname}`);
+      }
+    });
+
+    return () => {
+      channel.unbind_all();
+      pusherClient.unsubscribe(`game-${pin}`);
+    };
+  }, [pin, nickname, router]);
 
   return (
     <main className="min-h-screen flex flex-col bg-purple-theme p-8 relative overflow-hidden">
