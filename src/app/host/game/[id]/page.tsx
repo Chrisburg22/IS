@@ -96,13 +96,15 @@ function HostGameContent() {
   const searchParams = useSearchParams();
   const quizId = params?.id as string;
   const pin = searchParams.get("pin");
-  const [questions] = useState(() => {
+  const [questions, setQuestions] = useState(QUIZZES_CONTENT[quizId] || QUIZZES_CONTENT.basico);
+
+  useEffect(() => {
     const originalQuestions = QUIZZES_CONTENT[quizId] || QUIZZES_CONTENT.basico;
-    return originalQuestions.map(q => ({
+    setQuestions(originalQuestions.map(q => ({
       ...q,
       options: [...q.options].sort(() => Math.random() - 0.5)
-    }));
-  });
+    })));
+  }, [quizId]);
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(questions[0].timeLimit);
