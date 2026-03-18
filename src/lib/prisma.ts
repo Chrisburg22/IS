@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    adapter: undefined // Use default PostgreSQL adapter
+    adapter: undefined // Use default PostgreSQL adapter fgbsgsfgs
   });
 };
 
