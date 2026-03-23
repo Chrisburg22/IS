@@ -46,6 +46,22 @@ const PREDEFINED_QUIZZES = [
     level: "Medium",
     color: "bg-teal-500"
   },
+  { 
+    id: "fania", 
+    title: "Administración de Entregas (Fania Edition)", 
+    description: "Planificación, coordinación y automatización del flujo de software a producción.",
+    questions: 10, 
+    level: "Medium",
+    color: "bg-purple-500"
+  },
+  { 
+    id: "auditoria", 
+    title: "Auditoría de la Configuración de Software", 
+    description: "Verificación formal de configuraciones, cambios y cumplimiento de estándares de seguridad.",
+    questions: 10, 
+    level: "Hard",
+    color: "bg-pink-500"
+  },
 ];
 
 export default function Dashboard() {

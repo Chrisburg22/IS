@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const MOCK_QUIZZES = [
   { id: "fania", title: "Administración de Entregas (Fania Edition)", questions: 10, plays: 0 },
+  { id: "auditoria", title: "Auditoría de Configuración", questions: 10, plays: 0 },
   { id: "basico", title: "Nivel Básico: Fundamentos", questions: 10, plays: 156 },
   { id: "intermedio", title: "Nivel Intermedio: Despliegue", questions: 12, plays: 89 },
   { id: "avanzado", title: "Nivel Avanzado: Excelencia", questions: 15, plays: 42 },
