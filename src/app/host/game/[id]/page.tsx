@@ -80,6 +80,18 @@ const QUIZZES_CONTENT: Record<string, QuizQuestion[]> = {
     { text: "¿Cuál es uno de los beneficios de las Líneas Base según el documento?", timeLimit: 30, options: [{ text: "Facilitan la recuperación de versiones anteriores y fiables del sistema", isCorrect: true }, { text: "Permiten hacer cambios sin aprobación", isCorrect: false }, { text: "Eliminan la necesidad de documentar cambios", isCorrect: false }, { text: "Aumentan la velocidad de programación", isCorrect: false }] },
     { text: "¿Qué establece la relación entre Identificación y Control según el documento?", timeLimit: 30, options: [{ text: "La identificación establece una estructura; el control gestiona esa estructura y sus cambios", isCorrect: true }, { text: "Son procesos independientes sin relación", isCorrect: false }, { text: "La identificación gestiona los cambios y el control define los elementos", isCorrect: false }, { text: "El control es anterior a la identificación", isCorrect: false }] },
   ],
+  fania: [
+    { text: "¿Cuál es el objetivo principal de la Gestión de Releases?", timeLimit: 30, options: [{ text: "Escribir código más rápido", isCorrect: false }, { text: "Planificar, coordinar y automatizar el flujo de software a producción", isCorrect: true }, { text: "Eliminar a los desarrolladores del proceso", isCorrect: false }, { text: "Comprar licencias de software más baratas", isCorrect: false }] },
+    { text: "En la analogía de la orquesta, ¿qué representa el 'Arreglo Musical'?", timeLimit: 30, options: [{ text: "El código fuente", isCorrect: false }, { text: "El servidor de producción", isCorrect: false }, { text: "El Pipeline de Integración Continua (CI)", isCorrect: true }, { text: "El manual de usuario", isCorrect: false }] },
+    { text: "¿A qué era corresponde el modelo en cascada (Waterfall) según la línea del tiempo?", timeLimit: 30, options: [{ text: "Era DevOps (Hoy)", isCorrect: false }, { text: "Era Ágil (2001-2010)", isCorrect: false }, { text: "Era Fania / Cascada (1970-2000)", isCorrect: true }, { text: "Era Cloud Native", isCorrect: false }] },
+    { text: "Según métricas DORA, ¿cuántas veces más rápido es el tiempo de recuperación (MTTR) en equipos élite?", timeLimit: 30, options: [{ text: "2 veces", isCorrect: false }, { text: "2604 veces", isCorrect: true }, { text: "100 veces", isCorrect: false }, { text: "No hay diferencia", isCorrect: false }] },
+    { text: "Diferencia clave entre CI (Integración Continua) y CD (Entrega Continua):", timeLimit: 30, options: [{ text: "CI es manual, CD es automático", isCorrect: false }, { text: "CI se enfoca en la calidad del código/build; CD en la entrega a ambientes/producción", isCorrect: true }, { text: "CI es para Java, CD es para Python", isCorrect: false }, { text: "No hay diferencia, son lo mismo", isCorrect: false }] },
+    { text: "¿Qué estrategia de despliegue utiliza dos ambientes idénticos (Lado A / Lado B)?", timeLimit: 30, options: [{ text: "Canary Release", isCorrect: false }, { text: "Rolling Update", isCorrect: false }, { text: "Blue / Green Deployment", isCorrect: true }, { text: "A/B Testing", isCorrect: false }] },
+    { text: "¿Cuál es el propósito del ambiente de 'Staging'?", timeLimit: 30, options: [{ text: "Donde los devs escriben código por primera vez", isCorrect: false }, { text: "Limpiar los servidores viejos", isCorrect: false }, { text: "Validación final con datos anonimizados antes de producción", isCorrect: true }, { text: "Hacer pruebas de estrés el mismo día del lanzamiento", isCorrect: false }] },
+    { text: "¿Qué significa 'Shift-Left Testing'?", timeLimit: 30, options: [{ text: "Mover las pruebas al final del ciclo", isCorrect: false }, { text: "Probar solo en el lado izquierdo del servidor", isCorrect: false }, { text: "Integrar y ejecutar pruebas lo más temprano posible en el desarrollo", isCorrect: true }, { text: "Eliminar las pruebas manuales", isCorrect: false }] },
+    { text: "En DevSecOps, ¿qué herramienta analiza el código fuente en busca de vulnerabilidades?", timeLimit: 30, options: [{ text: "SAST (Análisis Estático)", isCorrect: true }, { text: "DAST (Análisis Dinámico)", isCorrect: false }, { text: "SCA (Análisis de Dependencias)", isCorrect: false }, { text: "Docker", isCorrect: false }] },
+    { text: "¿Qué componente de observabilidad mide el pulso constante del sistema (el metrónomo)?", timeLimit: 30, options: [{ text: "Logs", isCorrect: false }, { text: "Traces", isCorrect: false }, { text: "Metrics", isCorrect: true }, { text: "Feature Flags", isCorrect: false }] },
+  ],
 };
 
 const QUIZ_TITLES: Record<string, string> = {
@@ -88,6 +100,7 @@ const QUIZ_TITLES: Record<string, string> = {
   avanzado: "Nivel Avanzado: Excelencia",
   "3.4": "3.4 Registro del estado de la configuración del software",
   "3.3": "3.3 Control de la configuración del software",
+  fania: "Quiz: Administración de Entregas y Liberaciones (Fania Edition)",
 };
 
 function HostGameContent() {

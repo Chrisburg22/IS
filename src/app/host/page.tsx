@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const MOCK_QUIZZES = [
-  { id: "1", title: "JavaScript Basics", questions: 10, plays: 156 },
-  { id: "2", title: "Modern CSS Techniques", questions: 8, plays: 89 },
-  { id: "3", title: "Next.js 15 Deep Dive", questions: 12, plays: 42 },
+  { id: "fania", title: "Administración de Entregas (Fania Edition)", questions: 10, plays: 0 },
+  { id: "basico", title: "Nivel Básico: Fundamentos", questions: 10, plays: 156 },
+  { id: "intermedio", title: "Nivel Intermedio: Despliegue", questions: 12, plays: 89 },
+  { id: "avanzado", title: "Nivel Avanzado: Excelencia", questions: 15, plays: 42 },
 ];
 
 export default function HostDashboard() {
